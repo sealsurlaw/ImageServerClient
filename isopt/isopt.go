@@ -1,4 +1,4 @@
-package option
+package isopt
 
 import "time"
 

@@ -1,4 +1,4 @@
-package client
+package isclient
 
 import (
 	"bytes"
@@ -13,8 +13,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/sealsurlaw/ImageServerClient/option"
-	"github.com/sealsurlaw/ImageServerClient/response"
+	"github.com/sealsurlaw/ImageServerClient/isopt"
+	"github.com/sealsurlaw/ImageServerClient/isres"
 )
 
 type Client struct {
@@ -80,10 +80,10 @@ func (c *Client) DownloadImageByToken(token int64) ([]byte, error) {
 	return fileData, nil
 }
 
-func (c *Client) CreateLink(filename string, opts ...option.CreateLinkOpts) (*response.LinkResponse, error) {
-	var opt option.CreateLinkOpts
+func (c *Client) CreateLink(filename string, opts ...isopt.CreateLinkOpts) (*isres.LinkResponse, error) {
+	var opt isopt.CreateLinkOpts
 	if len(opts) == 0 {
-		opt = option.CreateLinkOpts{}
+		opt = isopt.CreateLinkOpts{}
 	} else {
 		opt = opts[0]
 	}
@@ -114,7 +114,7 @@ func (c *Client) CreateLink(filename string, opts ...option.CreateLinkOpts) (*re
 		return nil, fmt.Errorf(string(bodyData))
 	}
 
-	linkResponse := &response.LinkResponse{}
+	linkResponse := &isres.LinkResponse{}
 	err = json.Unmarshal(bodyData, linkResponse)
 	if err != nil {
 		return nil, err
@@ -123,10 +123,10 @@ func (c *Client) CreateLink(filename string, opts ...option.CreateLinkOpts) (*re
 	return linkResponse, nil
 }
 
-func (c *Client) CreateThumbnailLink(filename string, resolution int, opts ...option.CreateThumbnailLinkOpts) (*response.LinkResponse, error) {
-	var opt option.CreateThumbnailLinkOpts
+func (c *Client) CreateThumbnailLink(filename string, resolution int, opts ...isopt.CreateThumbnailLinkOpts) (*isres.LinkResponse, error) {
+	var opt isopt.CreateThumbnailLinkOpts
 	if len(opts) == 0 {
-		opt = option.CreateThumbnailLinkOpts{}
+		opt = isopt.CreateThumbnailLinkOpts{}
 	} else {
 		opt = opts[0]
 	}
@@ -160,7 +160,7 @@ func (c *Client) CreateThumbnailLink(filename string, resolution int, opts ...op
 		return nil, fmt.Errorf(string(bodyData))
 	}
 
-	linkResponse := &response.LinkResponse{}
+	linkResponse := &isres.LinkResponse{}
 	err = json.Unmarshal(bodyData, linkResponse)
 	if err != nil {
 		return nil, err

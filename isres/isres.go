@@ -1,4 +1,4 @@
-package response
+package isres
 
 type ErrorResponse struct {
 	Code   int    `json:"code"`
