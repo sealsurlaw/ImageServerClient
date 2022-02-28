@@ -9,7 +9,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 
@@ -29,8 +28,8 @@ func NewClient(baseUrl, token string) *Client {
 	}
 }
 
-func (c *Client) UploadImage(filename string, file *os.File) error {
-	res, err := c.postFormFile(filename, file)
+func (c *Client) UploadImage(filename string, fileData []byte) error {
+	res, err := c.postFormFile(filename, fileData)
 	if err != nil {
 		return err
 	}
@@ -169,15 +168,16 @@ func (c *Client) CreateThumbnailLink(filename string, resolution int, opts ...is
 	return linkResponse, nil
 }
 
-func (c *Client) postFormFile(filename string, file *os.File) (*http.Response, error) {
+func (c *Client) postFormFile(filename string, fileData []byte) (*http.Response, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	fw, err := writer.CreateFormFile("file", file.Name())
+	fw, err := writer.CreateFormFile("file", "file")
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = io.Copy(fw, file)
+	r := bytes.NewBuffer(fileData)
+	_, err = io.Copy(fw, r)
 	if err != nil {
 		return nil, err
 	}
