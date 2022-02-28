@@ -1,4 +1,4 @@
-package isopt
+package imgopt
 
 import "time"
 
@@ -8,5 +8,10 @@ type CreateLinkOpts struct {
 
 type CreateThumbnailLinkOpts struct {
 	Expires *time.Duration
-	Cropped bool
+	Square  bool
+}
+
+type CreateThumbnailLinksOpts struct {
+	Expires *time.Duration
+	Square  bool
 }
