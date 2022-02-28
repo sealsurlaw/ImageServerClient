@@ -35,7 +35,7 @@ func (c *Client) UploadImage(filename string, fileData []byte) error {
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode >= 400 {
 		bodyData, err := ioutil.ReadAll(res.Body)
 		if err != nil {
 			return err
@@ -108,7 +108,7 @@ func (c *Client) CreateLink(filename string, opts ...isopt.CreateLinkOpts) (*isr
 		return nil, err
 	}
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode >= 400 {
 		return nil, fmt.Errorf(string(bodyData))
 	}
 
