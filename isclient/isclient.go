@@ -43,7 +43,6 @@ func (c *Client) UploadImage(filename string, fileData []byte) error {
 
 		return fmt.Errorf(string(bodyData))
 	}
-
 	return nil
 }
 
