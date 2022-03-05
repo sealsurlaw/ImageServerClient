@@ -20,8 +20,9 @@ type CreateLinkOpts struct {
 }
 
 type CreateUploadLinkOpts struct {
-	Expires *time.Duration
-	Secret  string
+	Expires     *time.Duration
+	Secret      string
+	Resolutions []int
 }
 
 type CreateThumbnailLinkOpts struct {

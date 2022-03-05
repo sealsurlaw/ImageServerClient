@@ -165,8 +165,9 @@ func (c *Client) CreateUploadLink(
 	}
 
 	req := &CreateUploadLinkRequest{
-		Filename: filename,
-		Secret:   opt.Secret,
+		Filename:    filename,
+		Secret:      opt.Secret,
+		Resolutions: opt.Resolutions,
 	}
 
 	queryParams := url.Values{}
