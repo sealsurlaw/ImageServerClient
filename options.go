@@ -1,4 +1,4 @@
-package imgopt
+package gouvre
 
 import "time"
 
@@ -10,7 +10,16 @@ type DownloadOpts struct {
 	Secret string
 }
 
+type DownloadByTokenOpts struct {
+	Secret string
+}
+
 type CreateLinkOpts struct {
+	Expires *time.Duration
+	Secret  string
+}
+
+type CreateUploadLinkOpts struct {
 	Expires *time.Duration
 	Secret  string
 }
@@ -21,7 +30,7 @@ type CreateThumbnailLinkOpts struct {
 	Secret  string
 }
 
-type CreateThumbnailLinksOpts struct {
+type CreateBatchThumbnailLinksOpts struct {
 	Expires *time.Duration
 	Square  bool
 	Secret  string

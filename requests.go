@@ -1,17 +1,22 @@
-package imgreq
+package gouvre
 
 type CreateLinkRequest struct {
 	Filename string `json:"filename"`
 	Secret   string `json:"secret,omitempty"`
 }
 
-type CreateThumbnailRequest struct {
+type CreateUploadLinkRequest struct {
+	Filename string `json:"filename"`
+	Secret   string `json:"secret,omitempty"`
+}
+
+type CreateThumbnailLinkRequest struct {
 	Resolution int    `json:"resolution"`
 	Filename   string `json:"filename"`
 	Secret     string `json:"secret,omitempty"`
 }
 
-type CreateThumbnailsRequest struct {
+type CreateBatchThumbnailLinksRequest struct {
 	Resolution int      `json:"resolution"`
 	Filenames  []string `json:"filenames"`
 	Secret     string   `json:"secret,omitempty"`

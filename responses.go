@@ -1,4 +1,4 @@
-package imgres
+package gouvre
 
 type ErrorResponse struct {
 	Code   int    `json:"code"`
@@ -7,17 +7,22 @@ type ErrorResponse struct {
 	Error  string `json:"error,omitempty"`
 }
 
-type LinkResponse struct {
+type CreateLinkResponse struct {
 	ExpiresAt string `json:"expiresAt"`
 	Url       string `json:"url"`
 }
 
-type ThumbnailResponse struct {
+type CreateUploadLinkResponse struct {
 	ExpiresAt string `json:"expiresAt"`
 	Url       string `json:"url"`
 }
 
-type ThumbnailsResponse struct {
+type CreateThumbnailLinkResponse struct {
+	ExpiresAt string `json:"expiresAt"`
+	Url       string `json:"url"`
+}
+
+type CreateBatchThumbnailLinksResponse struct {
 	ExpiresAt     string            `json:"expiresAt"`
 	FilenameToUrl map[string]string `json:"filenameToUrl"`
 }
