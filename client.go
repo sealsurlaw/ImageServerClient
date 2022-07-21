@@ -24,23 +24,66 @@ func NewClient(baseUrl, token string) *Client {
 	}
 }
 
-func (c *Client) UploadImage(filename string, fileData []byte, opts ...UploadOpts) error {
+func (c *Client) UploadFile(
+	filename string,
+	fileData []byte,
+	opts ...UploadOpts,
+) (*UploadResponse, error) {
 	opt := UploadOpts{}
 	if len(opts) > 0 {
 		opt = opts[0]
 	}
 
-	uploadUrl := fmt.Sprintf("%s/uploads", c.baseUrl)
+	uploadUrl := fmt.Sprintf("%s/images/uploads", c.baseUrl)
 	res, err := c.postFormFile(uploadUrl, filename, fileData, opt.Secret)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer res.Body.Close()
 
-	if _, err = tryParseData(res); err != nil {
-		return err
+	bodyData, err := tryParseData(res)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+
+	response := &UploadResponse{}
+	err = json.Unmarshal(bodyData, response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func (c *Client) UploadImage(
+	filename string,
+	fileData []byte,
+	opts ...UploadOpts,
+) (*UploadResponse, error) {
+	opt := UploadOpts{}
+	if len(opts) > 0 {
+		opt = opts[0]
+	}
+
+	uploadUrl := fmt.Sprintf("%s/images/uploads", c.baseUrl)
+	res, err := c.postFormFile(uploadUrl, filename, fileData, opt.Secret)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	bodyData, err := tryParseData(res)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UploadResponse{}
+	err = json.Unmarshal(bodyData, response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
 }
 
 func (c *Client) UploadImageFromToken(token string, fileData []byte, opts ...UploadOpts) error {
@@ -49,7 +92,7 @@ func (c *Client) UploadImageFromToken(token string, fileData []byte, opts ...Upl
 		opt = opts[0]
 	}
 
-	uploadUrl := fmt.Sprintf("%s/uploads/%s", c.baseUrl, token)
+	uploadUrl := fmt.Sprintf("%s/images/uploads/%s", c.baseUrl, token)
 	res, err := c.postFormFile(uploadUrl, "", fileData, opt.Secret)
 	if err != nil {
 		return err
@@ -99,7 +142,7 @@ func (c *Client) DownloadImageByToken(token string, opts ...DownloadByTokenOpts)
 		queryParams.Add("secret", opt.Secret)
 	}
 
-	downloadUrl := fmt.Sprintf("%s/uploads/%s?%s", c.baseUrl, token, queryParams.Encode())
+	downloadUrl := fmt.Sprintf("%s/images/uploads/%s?%s", c.baseUrl, token, queryParams.Encode())
 	res, err := c.get(downloadUrl)
 	if err != nil {
 		return nil, err
@@ -114,7 +157,7 @@ func (c *Client) DownloadImageByToken(token string, opts ...DownloadByTokenOpts)
 	return fileData, nil
 }
 
-func (c *Client) CreateLink(
+func (c *Client) CreateImageLink(
 	filename string,
 	opts ...CreateLinkOpts,
 ) (*CreateLinkResponse, error) {
@@ -133,7 +176,7 @@ func (c *Client) CreateLink(
 		queryParams.Add("expires", opt.Expires.String())
 	}
 
-	linkUrl := fmt.Sprintf("%s/links?%s", c.baseUrl, queryParams.Encode())
+	linkUrl := fmt.Sprintf("%s/images/links?%s", c.baseUrl, queryParams.Encode())
 
 	res, err := c.post(linkUrl, req)
 	if err != nil {
@@ -155,7 +198,7 @@ func (c *Client) CreateLink(
 	return linkResponse, nil
 }
 
-func (c *Client) CreateUploadLink(
+func (c *Client) CreateUploadImageLink(
 	filename string,
 	opts ...CreateUploadLinkOpts,
 ) (*CreateUploadLinkResponse, error) {
@@ -175,7 +218,7 @@ func (c *Client) CreateUploadLink(
 		queryParams.Add("expires", opt.Expires.String())
 	}
 
-	linkUrl := fmt.Sprintf("%s/links/upload?%s", c.baseUrl, queryParams.Encode())
+	linkUrl := fmt.Sprintf("%s/images/links/upload?%s", c.baseUrl, queryParams.Encode())
 
 	res, err := c.post(linkUrl, req)
 	if err != nil {
@@ -197,7 +240,7 @@ func (c *Client) CreateUploadLink(
 	return linkResponse, nil
 }
 
-func (c *Client) CreateThumbnailLink(
+func (c *Client) CreateImageThumbnailLink(
 	resolution int,
 	filename string,
 	opts ...CreateThumbnailLinkOpts,
@@ -220,7 +263,7 @@ func (c *Client) CreateThumbnailLink(
 		queryParams.Add("expires", opt.Expires.String())
 	}
 
-	thumbnailUrl := fmt.Sprintf("%s/links/thumbnails?%s", c.baseUrl, queryParams.Encode())
+	thumbnailUrl := fmt.Sprintf("%s/images/links/thumbnails?%s", c.baseUrl, queryParams.Encode())
 
 	res, err := c.post(thumbnailUrl, req)
 	if err != nil {
@@ -242,7 +285,7 @@ func (c *Client) CreateThumbnailLink(
 	return linkResponse, nil
 }
 
-func (c *Client) CreateBatchThumbnailLinks(
+func (c *Client) CreateBatchImageThumbnailLinks(
 	resolution int,
 	filenames []string,
 	opts ...CreateBatchThumbnailLinksOpts,
@@ -265,7 +308,7 @@ func (c *Client) CreateBatchThumbnailLinks(
 		queryParams.Add("expires", opt.Expires.String())
 	}
 
-	thumbnailUrl := fmt.Sprintf("%s/links/thumbnails/batch?%s", c.baseUrl, queryParams.Encode())
+	thumbnailUrl := fmt.Sprintf("%s/images/links/thumbnails/batch?%s", c.baseUrl, queryParams.Encode())
 
 	res, err := c.post(thumbnailUrl, req)
 	if err != nil {
@@ -285,6 +328,31 @@ func (c *Client) CreateBatchThumbnailLinks(
 	}
 
 	return linkResponse, nil
+}
+
+func (c *Client) PinJsonToIpfs(
+	jsonData interface{},
+) (*PinJsonToIpfsResponse, error) {
+	url := fmt.Sprintf("%s/ipfs/json", c.baseUrl)
+
+	res, err := c.post(url, jsonData)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	bodyData, err := tryParseData(res)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PinJsonToIpfsResponse{}
+	err = json.Unmarshal(bodyData, response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
 }
 
 func (c *Client) get(url string) (*http.Response, error) {

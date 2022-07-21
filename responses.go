@@ -7,6 +7,10 @@ type ErrorResponse struct {
 	Error  string `json:"error,omitempty"`
 }
 
+type UploadResponse struct {
+	Cid string `json:"cid"`
+}
+
 type CreateLinkResponse struct {
 	ExpiresAt string `json:"expiresAt"`
 	Url       string `json:"url"`
@@ -25,4 +29,8 @@ type CreateThumbnailLinkResponse struct {
 type CreateBatchThumbnailLinksResponse struct {
 	ExpiresAt     string            `json:"expiresAt"`
 	FilenameToUrl map[string]string `json:"filenameToUrl"`
+}
+
+type PinJsonToIpfsResponse struct {
+	Cid string `json:"cid"`
 }
